@@ -25,6 +25,10 @@ func Run() error {
 	if err != nil {
 		return err
 	}
+	err = stats(ctx, sdk)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -71,6 +75,29 @@ func pokemon(ctx context.Context, sdk *pokedex.Client) error {
 		}
 		for _, p := range pokemon {
 			fmt.Printf("id: %d name: %s\n", p.ID, p.Name)
+		}
+	}
+
+	return nil
+}
+
+func stats(ctx context.Context, sdk *pokedex.Client) error {
+	res, err := sdk.ListStats(ctx, pokedex.ListRequest{PageSize: 10})
+	if err != nil {
+		return err
+	}
+	it := res.Iterator
+
+	for {
+		stats, err := it.Next(ctx)
+		if err == iterator.EndOfIterator {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		for _, s := range stats {
+			fmt.Printf("id: %d name: %s\n", s.ID, s.Name)
 		}
 	}
 

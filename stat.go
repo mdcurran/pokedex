@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"sync"
 
+	"github.com/mdcurran/pokedex/internal/iterator"
 	"github.com/mdcurran/pokedex/models"
 )
 
@@ -40,4 +42,45 @@ func (c *Client) getStat(ctx context.Context, resource string) (*models.Stat, er
 	c.cache.Set(u.String(), b)
 
 	return stat, nil
+}
+
+type ListStatsResponse struct {
+	Iterator *iterator.Paginator[*models.Stat]
+}
+
+func (c *Client) ListStats(ctx context.Context, r ListRequest) (*ListStatsResponse, error) {
+	it := iterator.NewPaginator(ctx, r.PageSize, func(ctx context.Context, start, end uint) ([]*models.Stat, error) {
+		resourceList, err := c.fetchResourceList(ctx, "stat", start, end-start)
+		if err != nil {
+			return nil, err
+		}
+
+		var (
+			wg     sync.WaitGroup
+			stats  = make([]*models.Stat, len(resourceList.Results))
+			errors = make(chan error)
+		)
+		for i, item := range resourceList.Results {
+			wg.Add(1)
+			go func(i int, ctx context.Context, resource string) {
+				nature, err := c.getStat(ctx, resource)
+				if err != nil {
+					errors <- err
+					return
+				}
+				stats[i] = nature
+				wg.Done()
+			}(i, ctx, item.Name)
+		}
+		wg.Wait()
+
+		select {
+		case err := <-errors:
+			return nil, err
+		default:
+			return stats, nil
+		}
+	})
+
+	return &ListStatsResponse{Iterator: it}, nil
 }
