@@ -10,6 +10,10 @@ necessary directory structure if needed.
 
 To run the test-suite, run: `make test`.
 
+In `examples/` there are test scripts to validate the API worked during
+development. They can be run with `go run examples/<DIR>/main.go`, but they're
+mostly for my own debugging.
+
 ### Generating Models
 
 The PokéAPI structs in `models/` were generated from the schemas defined in

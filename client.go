@@ -1,7 +1,9 @@
 package pokedex
 
 import (
+	"context"
 	"errors"
+	"io"
 	"net/http"
 	"net/url"
 	"time"
@@ -78,6 +80,30 @@ func NewWithOptions(options Options) (*Client, error) {
 func (c *Client) Close() {
 	c.cache.Close()
 	c.closed = true
+}
+
+func (c *Client) fetch(ctx context.Context, url string) ([]byte, error) {
+	if c.closed {
+		return nil, ErrClientClosed
+	}
+
+	b, ok := c.cache.Get(url)
+	if ok {
+		return b, nil
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, http.NoBody)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	return io.ReadAll(res.Body)
 }
 
 func (c *Client) do(r *http.Request) (*http.Response, error) {
