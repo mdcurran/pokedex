@@ -13,10 +13,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetPokemon(t *testing.T) {
+func TestGetStat(t *testing.T) {
 	ctx := context.Background()
 
-	fixture, err := json.Marshal(faker.NewFaker().GeneratePokemon())
+	fixture, err := json.Marshal(faker.NewFaker().GenerateStat())
 	require.NoError(t, err)
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -33,14 +33,14 @@ func TestGetPokemon(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(sdk.Close)
 
-	res, err := sdk.GetPokemon(ctx, GetPokemonRequest{
+	res, err := sdk.GetStat(ctx, GetStatRequest{
 		ID: 1,
 	})
 	require.NoError(t, err)
 
-	serialised, err := json.Marshal(res.Pokemon)
+	serialised, err := json.Marshal(res.Stat)
 	require.NoError(t, err)
 	require.JSONEq(t, string(fixture), string(serialised))
 
-	require.Len(t, res.Pokemon.Abilities, 1)
+	require.Len(t, res.Stat.Characteristics, 3)
 }

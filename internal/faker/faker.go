@@ -41,3 +41,16 @@ func (f *Faker) GeneratePokemon() *models.Pokemon {
 		},
 	}
 }
+
+func (f *Faker) GenerateStat() *models.Stat {
+	return &models.Stat{
+		ID:           f.instance.Rand.Int(),
+		Name:         f.instance.Name(),
+		IsBattleOnly: f.instance.Bool(),
+		Characteristics: []models.ApiResource{
+			{Url: f.instance.URL()},
+			{Url: f.instance.URL()},
+			{Url: f.instance.URL()},
+		},
+	}
+}
