@@ -23,3 +23,21 @@ func (f *Faker) GenerateNature() *models.Nature {
 		},
 	}
 }
+
+func (f *Faker) GeneratePokemon() *models.Pokemon {
+	return &models.Pokemon{
+		ID:     f.instance.Rand.Int(),
+		Name:   f.instance.Name(),
+		Height: f.instance.Rand.Int(),
+		Abilities: []models.PokemonAbilitiesElem{
+			{
+				Ability: models.NamedApiResource{
+					Name: f.instance.Name(),
+					Url:  f.instance.URL(),
+				},
+				IsHidden: f.instance.Bool(),
+				Slot:     f.instance.Rand.Int(),
+			},
+		},
+	}
+}
