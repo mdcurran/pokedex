@@ -96,3 +96,27 @@ func TestNature_UnexpectedError(t *testing.T) {
 	require.Equal(t, "Unexpected Error", sdkErr.Message)
 	require.Equal(t, http.StatusBadGateway, sdkErr.StatusCode)
 }
+
+func TestNature_ClientClosed(t *testing.T) {
+	ctx := context.Background()
+
+	sdk, err := NewWithOptions(Options{
+		BaseURL:          "https://example.com",
+		Timeout:          5 * time.Second,
+		CacheMaximumSize: 1 << 27,
+		CacheTTL:         10 * time.Second,
+	})
+	require.NoError(t, err)
+	t.Cleanup(sdk.Close)
+
+	sdk.Close()
+
+	res, err := sdk.GetNature(ctx, GetNatureRequest{ID: 1})
+	require.Nil(t, res)
+
+	sdkErr, ok := err.(*SDKError)
+	require.True(t, ok)
+
+	require.Equal(t, "sdk client closed", sdkErr.Message)
+	require.Equal(t, CodeClientClosed, sdkErr.StatusCode)
+}
