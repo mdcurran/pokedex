@@ -2,13 +2,16 @@ package pokedex
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 
 	"github.com/mdcurran/pokedex/internal/store"
+	"github.com/mdcurran/pokedex/models"
 )
 
 var ErrClientClosed = errors.New("sdk client closed")
@@ -115,6 +118,27 @@ func (c *Client) fetch(ctx context.Context, url string) ([]byte, *http.Response,
 	}
 
 	return b, res, nil
+}
+
+func (c *Client) fetchResourceList(ctx context.Context, resource string, start, end uint) (*models.NamedApiResourceList, error) {
+	u := c.baseURL.JoinPath(resource)
+	q := url.Values{}
+	q.Set("offset", strconv.Itoa(int(start)))
+	q.Set("limit", strconv.Itoa(int(end)))
+	u.RawQuery = q.Encode()
+
+	b, res, err := c.fetch(ctx, u.String())
+	if err != nil {
+		return nil, err
+	}
+
+	var list *models.NamedApiResourceList
+	err = json.Unmarshal(b, &list)
+	if err != nil {
+		return nil, NewError(err.Error(), http.StatusUnprocessableEntity, res)
+	}
+
+	return list, nil
 }
 
 func (c *Client) do(r *http.Request) (*http.Response, error) {

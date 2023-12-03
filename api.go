@@ -28,3 +28,7 @@ func (r *GetRequest) GetResource() (string, error) {
 	}
 	return r.Name, nil
 }
+
+type ListRequest struct {
+	PageSize uint
+}
