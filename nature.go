@@ -50,7 +50,7 @@ type ListNaturesResponse struct {
 
 func (c *Client) ListNatures(ctx context.Context, r ListRequest) (*ListNaturesResponse, error) {
 	it := iterator.NewPaginator(ctx, r.PageSize, func(ctx context.Context, start, end uint) ([]*models.Nature, error) {
-		resourceList, err := c.fetchResourceList(ctx, "nature", start, end)
+		resourceList, err := c.fetchResourceList(ctx, "nature", start, end-start)
 		if err != nil {
 			return nil, err
 		}

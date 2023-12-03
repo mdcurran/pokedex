@@ -21,6 +21,10 @@ func Run() error {
 	if err != nil {
 		return err
 	}
+	err = pokemon(ctx, sdk)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -42,6 +46,31 @@ func natures(ctx context.Context, sdk *pokedex.Client) error {
 		}
 		for _, n := range natures {
 			fmt.Printf("id: %d name: %s\n", n.ID, n.Name)
+		}
+	}
+
+	return nil
+}
+
+func pokemon(ctx context.Context, sdk *pokedex.Client) error {
+	res, err := sdk.ListPokemon(ctx, pokedex.ListRequest{PageSize: 20})
+	if err != nil {
+		return err
+	}
+	it := res.Iterator
+
+	// There are lots of pokemon, for this test let's just exit after
+	// a few pages so we don't flood the API.
+	for i := 0; i < 10; i++ {
+		pokemon, err := it.Next(ctx)
+		if err == iterator.EndOfIterator {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		for _, p := range pokemon {
+			fmt.Printf("id: %d name: %s\n", p.ID, p.Name)
 		}
 	}
 
