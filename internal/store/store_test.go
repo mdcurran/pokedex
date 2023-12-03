@@ -1,4 +1,4 @@
-package cache
+package store
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestCache(t *testing.T) {
-	c, err := New(Options{
+	c, err := NewCache(CacheOptions{
 		MaximumSize: 1 << 27,
 		TTL:         10 * time.Minute,
 		debug:       true,

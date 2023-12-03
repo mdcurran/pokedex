@@ -1,4 +1,4 @@
-package cache
+package store
 
 import (
 	"sync"
@@ -6,6 +6,12 @@ import (
 
 	"github.com/dgraph-io/ristretto"
 )
+
+type Store interface {
+	Set(url string, body []byte)
+	Get(url string) (body []byte, ok bool)
+	Close()
+}
 
 // Cache stores data fetched from the PokéAPI in-memory. PokéAPI mandates that
 // users should cache values wherever possible. Each record in the cache is the
@@ -24,7 +30,7 @@ type Cache struct {
 	ttl time.Duration
 }
 
-type Options struct {
+type CacheOptions struct {
 	MaximumSize int64
 	TTL         time.Duration
 	// debug determines whether cache statistics are kept during the cache's
@@ -37,8 +43,8 @@ type Options struct {
 	debug bool
 }
 
-// New instantiates an in-memory cache for PokéAPI responses.
-func New(options Options) (*Cache, error) {
+// NewCache instantiates an in-memory Ristretto cache for PokéAPI responses.
+func NewCache(options CacheOptions) (*Cache, error) {
 	rst, err := ristretto.NewCache(&ristretto.Config{
 		// MaxCost is the maximum size (in bytes) of the cache.
 		MaxCost: options.MaximumSize,

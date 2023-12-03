@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/mdcurran/pokedex/internal/cache"
+	"github.com/mdcurran/pokedex/internal/store"
 )
 
 var ErrClientClosed = errors.New("sdk client closed")
@@ -18,7 +18,7 @@ const defaultBaseURL = "https://pokeapi.co/api/v2"
 type Client struct {
 	http    *http.Client
 	baseURL *url.URL
-	cache   *cache.Cache
+	cache   *store.Cache
 	// closed indicates if the SDK client has been previously closed.
 	// If closed is true the response cache has been shutdown. Therefore we
 	// want to prevent requests using a closed client, as no responses would
@@ -62,7 +62,7 @@ func NewWithOptions(options Options) (*Client, error) {
 		return nil, err
 	}
 
-	cache, err := cache.New(cache.Options{
+	cache, err := store.NewCache(store.CacheOptions{
 		MaximumSize: options.CacheMaximumSize,
 		TTL:         options.CacheTTL,
 	})
