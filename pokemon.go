@@ -3,6 +3,7 @@ package pokedex
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 
 	"github.com/mdcurran/pokedex/models"
 )
@@ -27,7 +28,7 @@ func (c *Client) GetPokemon(ctx context.Context, r GetPokemonRequest) (*GetPokem
 func (c *Client) getPokemon(ctx context.Context, resource string) (*models.Pokemon, error) {
 	u := c.baseURL.JoinPath("pokemon", resource)
 
-	b, err := c.fetch(ctx, u.String())
+	b, res, err := c.fetch(ctx, u.String())
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +36,7 @@ func (c *Client) getPokemon(ctx context.Context, resource string) (*models.Pokem
 	var pokemon *models.Pokemon
 	err = json.Unmarshal(b, &pokemon)
 	if err != nil {
-		return nil, err
+		return nil, NewError(err.Error(), http.StatusUnprocessableEntity, res)
 	}
 	c.cache.Set(u.String(), b)
 

@@ -3,6 +3,7 @@ package pokedex
 import (
 	"context"
 	"encoding/json"
+	"net/http"
 
 	"github.com/mdcurran/pokedex/models"
 )
@@ -27,7 +28,7 @@ func (c *Client) GetNature(ctx context.Context, r GetNatureRequest) (*GetNatureR
 func (c *Client) getNature(ctx context.Context, resource string) (*models.Nature, error) {
 	u := c.baseURL.JoinPath("nature", resource)
 
-	b, err := c.fetch(ctx, u.String())
+	b, res, err := c.fetch(ctx, u.String())
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +36,7 @@ func (c *Client) getNature(ctx context.Context, resource string) (*models.Nature
 	var nature *models.Nature
 	err = json.Unmarshal(b, &nature)
 	if err != nil {
-		return nil, err
+		return nil, NewError(err.Error(), http.StatusUnprocessableEntity, res)
 	}
 	c.cache.Set(u.String(), b)
 

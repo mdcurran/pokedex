@@ -82,28 +82,39 @@ func (c *Client) Close() {
 	c.closed = true
 }
 
-func (c *Client) fetch(ctx context.Context, url string) ([]byte, error) {
+func (c *Client) fetch(ctx context.Context, url string) ([]byte, *http.Response, error) {
 	if c.closed {
-		return nil, ErrClientClosed
+		return nil, nil, NewError(ErrClientClosed.Error(), CodeClientClosed, nil)
 	}
 
 	b, ok := c.cache.Get(url)
 	if ok {
-		return b, nil
+		return b, nil, nil
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, http.NoBody)
 	if err != nil {
-		return nil, err
+		return nil, nil, NewError(err.Error(), CodeInternal, nil)
 	}
 
 	res, err := c.do(req)
 	if err != nil {
-		return nil, err
+		return nil, nil, NewError(err.Error(), CodeInternal, nil)
+	}
+	if res != nil && res.StatusCode == http.StatusNotFound {
+		return nil, res, NewError("Not Found", res.StatusCode, res)
+	}
+	if res != nil && res.StatusCode != http.StatusOK {
+		return nil, res, NewError("Unexpected Error", res.StatusCode, res)
 	}
 	defer res.Body.Close()
 
-	return io.ReadAll(res.Body)
+	b, err = io.ReadAll(res.Body)
+	if err != nil {
+		return nil, res, NewError(err.Error(), http.StatusUnprocessableEntity, res)
+	}
+
+	return b, res, nil
 }
 
 func (c *Client) do(r *http.Request) (*http.Response, error) {
