@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/mdcurran/pokedex"
-	"github.com/mdcurran/pokedex/internal/iterator"
+	"github.com/mdcurran/pokedex/iterator"
 )
 
 func Run() error {

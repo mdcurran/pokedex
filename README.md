@@ -30,20 +30,20 @@ func main() {
 	}
 	defer sdk.Close()
 
-    // Metapod good.
-    res, err := sdk.GetPokemon(ctx, pokedex.GetRequest{Name: "metapod"})
+	// Metapod good.
+	res, err := sdk.GetPokemon(ctx, pokedex.GetRequest{Name: "metapod"})
 	if err != nil {
 		log.Fatal(err)
 	}
-    pokemon := res.Pokemon
+	pokemon := res.Pokemon
 
-    fmt.Printf("%s's ID is %d\n", pokemon.Name, pokemon.ID)
-    if len(pokemon.Abilities) > 0 {
-        first := pokemon.Abilities[0]
-        fmt.Printf("%s's first ability is called: %q\n", pokemon.Name, first.Ability.Name)
-    }
+	fmt.Printf("%s's ID is %d\n", pokemon.Name, pokemon.ID)
+	if len(pokemon.Abilities) > 0 {
+		first := pokemon.Abilities[0]
+		fmt.Printf("%s's first ability is called: %q\n", pokemon.Name, first.Ability.Name)
+	}
 
-    // ...
+	// ...
 }
 ```
 
@@ -58,7 +58,7 @@ import (
 	"log"
 
 	"github.com/mdcurran/pokedex"
-	"github.com/mdcurran/pokedex/internal/iterator"
+	"github.com/mdcurran/pokedex/iterator"
 )
 
 func main() {
@@ -70,13 +70,13 @@ func main() {
 	}
 	defer sdk.Close()
 
-    res, err := sdk.ListNatures(ctx, pokedex.ListRequest{PageSize: 10})
+	res, err := sdk.ListNatures(ctx, pokedex.ListRequest{PageSize: 10})
 	if err != nil {
 		log.Fatal(err)
 	}
-    it := res.Iterator
+	it := res.Iterator
 
-    for {
+	for {
 		natures, err := it.Next(ctx)
 		if err == iterator.EndOfIterator {
 			break
@@ -89,7 +89,7 @@ func main() {
 		}
 	}
 
-    // ...
+	// ...
 }
 ```
 

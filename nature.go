@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/mdcurran/pokedex/internal/iterator"
+	"github.com/mdcurran/pokedex/iterator"
 	"github.com/mdcurran/pokedex/models"
 )
 
