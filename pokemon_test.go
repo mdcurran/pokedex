@@ -33,9 +33,7 @@ func TestGetPokemon(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(sdk.Close)
 
-	res, err := sdk.GetPokemon(ctx, GetPokemonRequest{
-		ID: 1,
-	})
+	res, err := sdk.GetPokemon(ctx, GetRequest{ID: 1})
 	require.NoError(t, err)
 
 	serialised, err := json.Marshal(res.Pokemon)

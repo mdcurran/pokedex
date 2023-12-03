@@ -10,6 +10,7 @@ import (
 const (
 	CodeInternal     int = 600
 	CodeClientClosed int = 601
+	CodeInvalidArgs  int = 602
 )
 
 type SDKError struct {

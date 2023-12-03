@@ -33,7 +33,7 @@ func TestGetNature(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(sdk.Close)
 
-	res, err := sdk.GetNature(ctx, GetNatureRequest{ID: 1})
+	res, err := sdk.GetNature(ctx, GetRequest{ID: 1})
 	require.NoError(t, err)
 
 	serialised, err := json.Marshal(res.Nature)
@@ -59,7 +59,7 @@ func TestNature_NotFound(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(sdk.Close)
 
-	res, err := sdk.GetNature(ctx, GetNatureRequest{ID: 999999})
+	res, err := sdk.GetNature(ctx, GetRequest{ID: 999999})
 	require.Nil(t, res)
 
 	sdkErr, ok := err.(*SDKError)
@@ -87,7 +87,7 @@ func TestNature_UnexpectedError(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(sdk.Close)
 
-	res, err := sdk.GetNature(ctx, GetNatureRequest{ID: 999999})
+	res, err := sdk.GetNature(ctx, GetRequest{ID: 999999})
 	require.Nil(t, res)
 
 	sdkErr, ok := err.(*SDKError)
@@ -111,7 +111,7 @@ func TestNature_ClientClosed(t *testing.T) {
 
 	sdk.Close()
 
-	res, err := sdk.GetNature(ctx, GetNatureRequest{ID: 1})
+	res, err := sdk.GetNature(ctx, GetRequest{ID: 1})
 	require.Nil(t, res)
 
 	sdkErr, ok := err.(*SDKError)

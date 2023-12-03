@@ -8,17 +8,16 @@ import (
 	"github.com/mdcurran/pokedex/models"
 )
 
-type GetStatRequest struct {
-	ID   int
-	Name string
-}
-
 type GetStatResponse struct {
 	Stat *models.Stat
 }
 
-func (c *Client) GetStat(ctx context.Context, r GetStatRequest) (*GetStatResponse, error) {
-	stat, err := c.getStat(ctx, "1")
+func (c *Client) GetStat(ctx context.Context, r GetRequest) (*GetStatResponse, error) {
+	resource, err := r.GetResource()
+	if err != nil {
+		return nil, err
+	}
+	stat, err := c.getStat(ctx, resource)
 	if err != nil {
 		return nil, err
 	}

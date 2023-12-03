@@ -8,17 +8,16 @@ import (
 	"github.com/mdcurran/pokedex/models"
 )
 
-type GetPokemonRequest struct {
-	ID   int
-	Name string
-}
-
 type GetPokemonResponse struct {
 	Pokemon *models.Pokemon
 }
 
-func (c *Client) GetPokemon(ctx context.Context, r GetPokemonRequest) (*GetPokemonResponse, error) {
-	pokemon, err := c.getPokemon(ctx, "1")
+func (c *Client) GetPokemon(ctx context.Context, r GetRequest) (*GetPokemonResponse, error) {
+	resource, err := r.GetResource()
+	if err != nil {
+		return nil, err
+	}
+	pokemon, err := c.getPokemon(ctx, resource)
 	if err != nil {
 		return nil, err
 	}

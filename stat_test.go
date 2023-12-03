@@ -33,9 +33,7 @@ func TestGetStat(t *testing.T) {
 	require.NoError(t, err)
 	t.Cleanup(sdk.Close)
 
-	res, err := sdk.GetStat(ctx, GetStatRequest{
-		ID: 1,
-	})
+	res, err := sdk.GetStat(ctx, GetRequest{ID: 1})
 	require.NoError(t, err)
 
 	serialised, err := json.Marshal(res.Stat)

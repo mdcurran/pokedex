@@ -8,17 +8,16 @@ import (
 	"github.com/mdcurran/pokedex/models"
 )
 
-type GetNatureRequest struct {
-	ID   int
-	Name string
-}
-
 type GetNatureResponse struct {
 	Nature *models.Nature
 }
 
-func (c *Client) GetNature(ctx context.Context, r GetNatureRequest) (*GetNatureResponse, error) {
-	nature, err := c.getNature(ctx, "1")
+func (c *Client) GetNature(ctx context.Context, r GetRequest) (*GetNatureResponse, error) {
+	resource, err := r.GetResource()
+	if err != nil {
+		return nil, err
+	}
+	nature, err := c.getNature(ctx, resource)
 	if err != nil {
 		return nil, err
 	}

@@ -16,7 +16,7 @@ func Run() error {
 		return err
 	}
 
-	res, err := sdk.GetNature(ctx, pokedex.GetNatureRequest{})
+	res, err := sdk.GetNature(ctx, pokedex.GetRequest{ID: 2})
 	if err != nil {
 		return err
 	}
@@ -25,7 +25,7 @@ func Run() error {
 
 	// Hit cache.
 	for i := 1; i <= 10; i++ {
-		res, err = sdk.GetNature(ctx, pokedex.GetNatureRequest{})
+		res, err = sdk.GetNature(ctx, pokedex.GetRequest{ID: 2})
 		if err != nil {
 			return err
 		}
