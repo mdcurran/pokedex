@@ -13,8 +13,10 @@ func TestNewClient(t *testing.T) {
 	require.NotNil(t, client)
 
 	client, err = NewWithOptions(Options{
-		BaseURL: "https://example.com",
-		Timeout: 10 * time.Second,
+		BaseURL:          "https://example.com",
+		Timeout:          10 * time.Second,
+		CacheMaximumSize: 1,
+		CacheTTL:         1 * time.Minute,
 	})
 	require.NoError(t, err)
 	require.NotNil(t, client)

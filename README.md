@@ -6,6 +6,10 @@ To get started with development run: `make init`. This installs any tools
 required for local development (i.e. `go-jsonschema`), and setups the
 necessary directory structure if needed.
 
+### Testing
+
+To run the test-suite, run: `make test`.
+
 ### Generating Models
 
 The PokéAPI structs in `models/` were generated from the schemas defined in
