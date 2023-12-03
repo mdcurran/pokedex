@@ -14,6 +14,7 @@ type GetNatureResponse struct {
 	Nature *models.Nature
 }
 
+// GetNature returns a single Nature according to an ID or name.
 func (c *Client) GetNature(ctx context.Context, r GetRequest) (*GetNatureResponse, error) {
 	resource, err := r.GetResource()
 	if err != nil {
@@ -48,6 +49,8 @@ type ListNaturesResponse struct {
 	Iterator *iterator.Paginator[*models.Nature]
 }
 
+// ListNatures returns an iterator with a user-provided page size over all
+// Natures.
 func (c *Client) ListNatures(ctx context.Context, r ListRequest) (*ListNaturesResponse, error) {
 	it := iterator.NewPaginator(ctx, r.PageSize, func(ctx context.Context, start, end uint) ([]*models.Nature, error) {
 		resourceList, err := c.fetchResourceList(ctx, "nature", start, end-start)

@@ -14,6 +14,7 @@ type GetPokemonResponse struct {
 	Pokemon *models.Pokemon
 }
 
+// GetPokemon returns a single Pokemon according to an ID or name.
 func (c *Client) GetPokemon(ctx context.Context, r GetRequest) (*GetPokemonResponse, error) {
 	resource, err := r.GetResource()
 	if err != nil {
@@ -48,6 +49,8 @@ type ListPokemonResponse struct {
 	Iterator *iterator.Paginator[*models.Pokemon]
 }
 
+// ListPokemon returns an iterator with a user-provided page size over all
+// Pokemon.
 func (c *Client) ListPokemon(ctx context.Context, r ListRequest) (*ListPokemonResponse, error) {
 	it := iterator.NewPaginator(ctx, r.PageSize, func(ctx context.Context, start, end uint) ([]*models.Pokemon, error) {
 		resourceList, err := c.fetchResourceList(ctx, "pokemon", start, end-start)

@@ -14,6 +14,7 @@ type GetStatResponse struct {
 	Stat *models.Stat
 }
 
+// GetStat returns a single Stat according to an ID or name.
 func (c *Client) GetStat(ctx context.Context, r GetRequest) (*GetStatResponse, error) {
 	resource, err := r.GetResource()
 	if err != nil {
@@ -48,6 +49,7 @@ type ListStatsResponse struct {
 	Iterator *iterator.Paginator[*models.Stat]
 }
 
+// ListStats returns an iterator with a user-provided page size over all Stats.
 func (c *Client) ListStats(ctx context.Context, r ListRequest) (*ListStatsResponse, error) {
 	it := iterator.NewPaginator(ctx, r.PageSize, func(ctx context.Context, start, end uint) ([]*models.Stat, error) {
 		resourceList, err := c.fetchResourceList(ctx, "stat", start, end-start)

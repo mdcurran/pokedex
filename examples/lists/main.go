@@ -75,6 +75,10 @@ func pokemon(ctx context.Context, sdk *pokedex.Client) error {
 		}
 		for _, p := range pokemon {
 			fmt.Printf("id: %d name: %s\n", p.ID, p.Name)
+			if len(p.Abilities) > 0 {
+				first := p.Abilities[0]
+				fmt.Printf("first %s ability: %s\n", p.Name, first.Ability.Name)
+			}
 		}
 	}
 

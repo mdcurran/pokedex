@@ -80,11 +80,18 @@ func NewWithOptions(options Options) (*Client, error) {
 	}, nil
 }
 
+// Close gracefully shutsdown the SDK client. The closed boolean is set to
+// true to prevent future calls to the PokeAPI being made using the current
+// client.
 func (c *Client) Close() {
 	c.cache.Close()
 	c.closed = true
 }
 
+// fetch makes an HTTP request using the SDK's built-in HTTP client.
+// If the SDK client has been closed then shortcircuit from making the request.
+// fetch will check the cache to see if the required data is already there. If
+// so, read from the cache and return without making an HTTP request.
 func (c *Client) fetch(ctx context.Context, url string) ([]byte, *http.Response, error) {
 	if c.closed {
 		return nil, nil, NewError(ErrClientClosed.Error(), CodeClientClosed, nil)
